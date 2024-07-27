@@ -12,7 +12,7 @@ const CreateNewAccessCode = async (phone) => {
         setTimeout(async () => {
             await db.collection('users').doc(phone).delete();
         }, expired);
-        return result;
+        return otp;
     } catch (error) {
         console.log(error);
     }
@@ -24,8 +24,8 @@ router.post('/get-otp', async (req, res) => {
             throw Error('Phone number is required');
         }
         const phone = req.body.phone;
-        await CreateNewAccessCode(phone);
-        res.status(201).json({ success: true });
+        const otp = await CreateNewAccessCode(phone);
+        res.status(201).json({ success: true, otp });
     } catch (error) {
         res.status(500).json({ success: false, message: error });
         console.error(error);

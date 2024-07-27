@@ -53,6 +53,20 @@ const SaveGeneratedContent = async (topic, data) => {
     }
 }
 
+router.get('/', async (req, res) => {
+    try {
+        const phone = req.phone;
+        const response = await db.collection('captions').doc(phone).collection('posts').get();
+        let responseArray = [];
+        response.forEach(doc => {
+            responseArray.push(doc.data());
+        });
+        res.send(responseArray);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
 router.post('/generate-from-scratch', async (req, res) => {
     try {
         const subject = req.body.subject;
@@ -62,11 +76,10 @@ router.post('/generate-from-scratch', async (req, res) => {
         res.json(captions);
     } catch (error) {
         console.error("response error", error);
-
         if (error.message.includes('RECITATION')) {
             res.status(500).json({ error: "The AI model's response was blocked due to content policies. Please try again with a different prompt." });
         } else {
-            res.status(500).send(error);
+            res.status(500).json(error);
         }
     }
 });
@@ -81,7 +94,7 @@ router.post('/generate-from-idea', async (req, res) => {
         if (error.message.includes('RECITATION')) {
             res.status(500).json({ error: "The AI model's response was blocked due to content policies. Please try again with a different prompt." });
         } else {
-            res.status(500).send(error);
+            res.status(500).json(error);
         }
     }
 });
@@ -107,7 +120,8 @@ router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const phone = req.phone;
-        const response = await db.collection('captions').doc(phone).collection(id).delete();
+        console.log(123);
+        const response = await db.collection('captions').doc(phone).collection('posts').doc(id).delete();
         res.json({ success: true });
     } catch (error) {
         console.log(error);
