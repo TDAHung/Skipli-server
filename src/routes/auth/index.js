@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken');
 const CreateNewAccessCode = async (phone) => {
     try {
         const expired = 60 * 1000;
-        const result = await db.collection('users').doc(phone).set({ otp: Math.floor(100000 + Math.random() * 90000) });
+        const otp = Math.floor(100000 + Math.random() * 90000);
+        //send OTP by SMS
+        const result = await db.collection('users').doc(phone).set({ otp });
         setTimeout(async () => {
             await db.collection('users').doc(phone).delete();
         }, expired);
