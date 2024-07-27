@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/firebase');
 const jwt = require('jsonwebtoken');
+const { BadRequestException, NotFoundException } = require('../../filter');
 
 const CreateNewAccessCode = async (phone) => {
     try {
@@ -18,17 +19,33 @@ const CreateNewAccessCode = async (phone) => {
     }
 }
 
+const ValidateAccessCode = async (phone, _otp) => {
+    try {
+        const userRef = await db.collection('users').doc(phone).get();
+        if (!userRef.data()) throw new NotFoundException('OTP is Incorrect');
+        const { otp } = userRef.data();
+        if (_otp === otp) return true;
+        else return false;
+    } catch (error) {
+        throw error;
+    }
+}
+
 router.post('/get-otp', async (req, res) => {
     try {
         if (!req.body.phone) {
-            throw Error('Phone number is required');
+            throw new BadRequestException('Phone number is required');
         }
         const phone = req.body.phone;
         const otp = await CreateNewAccessCode(phone);
         res.status(201).json({ success: true, otp });
     } catch (error) {
-        res.status(500).json({ success: false, message: error });
-        console.error(error);
+        if (error instanceof BadRequestException) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+        } else {
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
+            console.error(error);
+        }
     }
 });
 
@@ -36,9 +53,10 @@ router.post('/login', async (req, res) => {
     try {
         const _phone = req.body.phone;
         const _otp = req.body.otp;
-        const userRef = await db.collection('users').doc(_phone).get();
-        const { otp } = userRef.data();
-        if (_otp === otp) {
+        if (!_phone) throw new BadRequestException('Phone number is required');
+        if (!_otp) throw new BadRequestException('OTP is required');
+        const otp = await ValidateAccessCode(_phone, _otp);
+        if (otp) {
             const token = jwt.sign({ phone: _phone }, process.env.JWT_KEY)
             res.cookie('token', token, {
                 httpOnly: true,
@@ -46,11 +64,14 @@ router.post('/login', async (req, res) => {
                 maxAge: 3600 * 1000 //ms
             });
             res.json({ success: true, token: token, phone: _phone, message: "Login Successful" });
-        } else {
-            res.status(401).json({ success: false, message: "Invalid OTP" });
-        }
+        } else throw new BadRequestException('OTP is Incorrect');
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        if (error instanceof BadRequestException) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+        } else {
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
+            console.error(error);
+        }
     }
 });
 

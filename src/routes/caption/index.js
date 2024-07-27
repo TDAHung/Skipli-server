@@ -103,7 +103,7 @@ router.post('/save', async (req, res) => {
     try {
         const topic = req.body.topic;
         const data = {
-            phone: req.body.phone,
+            phone: req.phone,
             caption: req.body.caption,
             socialNetwork: req.body.socialNetwork,
             tone: req.body.tone,
