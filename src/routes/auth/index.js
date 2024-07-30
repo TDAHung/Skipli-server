@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../config/firebase');
+const twilio = require('../../config/twilio');
 const jwt = require('jsonwebtoken');
 const { BadRequestException, NotFoundException } = require('../../filter');
 
@@ -10,6 +11,11 @@ const CreateNewAccessCode = async (phone) => {
         const otp = Math.floor(100000 + Math.random() * 90000);
         //send OTP by SMS
         const result = await db.collection('users').doc(phone).set({ otp });
+        twilio.messages.create({
+            body: `Your OTP is ${otp}`,
+            from: '+12075034838',
+            to: phone
+        }).then(message => console.log(message.sid));
         setTimeout(async () => {
             await db.collection('users').doc(phone).delete();
         }, expired);
@@ -58,8 +64,7 @@ router.post('/login', async (req, res) => {
         const otp = await ValidateAccessCode(_phone, _otp);
         if (otp) {
             const token = jwt.sign({ phone: _phone }, process.env.JWT_KEY)
-            res.cookie('token', token, {
-                httpOnly: true,
+            res.cookie('accessToken', token, {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 3600 * 1000 //ms
             });
@@ -76,3 +81,4 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+

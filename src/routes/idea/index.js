@@ -12,9 +12,8 @@ const getPostIdeas = async (topic) => {
         throw new Error('Invalid response from AI model');
     }
     const responseText = result.response.text();
-    console.log(responseText);
     const sections = responseText.split('**Idea:**').filter(section => section.trim().length > 0);
-    const ideas = sections.map(section => ({ idea: section.trim() }));
+    const ideas = sections.map(section => (section.trim()));
     return ideas;
 }
 
