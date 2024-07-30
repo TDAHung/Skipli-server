@@ -1,3 +1,24 @@
-"# Skipli-server" 
-"# Skipli-server" 
 # Skipli-server
+# STEP 1:
+Make sure your computer has node from v20 After clone the project and start the server
+# STEP 2:
+Contact me if you want to get the ENV file
+### Detail of ENV:
+PORT: This will be the port the project listens and runs.
+GEMINI_API_KEY: This is the gemini api key of the gemini of google generate you can follow this tutorial to get the api key: 
+JWT_KEY: This is random key you want to set. It can be any string.
+TWILIO_SID: This is the SID of Twilio to send the sms.
+TWILIO_TOKEN: This is the Auth Token of Twilio to send the sms.
+APP_PASSWORD: This is the gmail app password provide for you when you create the app in gmail service to send email.
+APP_USERNAME: This is the gmail app username provide for you when you create the app in gmail service to send email.
+ - For interviwer: please put the ENV file I attach at the same level of folder with main.js file.
+# STEP 3:
+Make sure you have the key of your Firestore database of firebase.
+To embed your Firestore database to the app follow this tutorial https://firebase.google.com/docs/firestore/quickstart#node.js_1
+ - For interviewer: please put the skipli-key.json at the same level of folder with the main.js file
+# STEP 4:
+Run the command:
+### npm install
+# STEP 5:
+Run the command:
+### npm run start
