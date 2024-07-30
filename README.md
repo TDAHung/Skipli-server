@@ -22,3 +22,5 @@ Run the command:
 # STEP 5:
 Run the command:
 ### npm run start
+# SUMMARY:
+After all steps the app should run at the url http://localhost:8080
