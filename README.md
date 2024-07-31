@@ -12,8 +12,9 @@ TWILIO_TOKEN: This is the Auth Token of Twilio to send the sms. <br>
 APP_PASSWORD: This is the gmail app password provide for you when you create the app in gmail service to send email. <br>
 APP_USERNAME: This is the gmail app username provide for you when you create the app in gmail service to send email. <br>
  - For interviwer: please put the ENV file I attach at the same level of folder with main.js file. <br>
- - Note: The Twilio trial account only can send sms to the verified phone number in the tab Verified Caller IDs, the message should be like this screen:
+ - Note: The Twilio trial account only can send sms to the verified phone number in the tab Verified Caller IDs in Twilio Console, the message should be like this screen:
    ![z5684651373838_a33b990b0fb69e277acd485fe059f097](https://github.com/user-attachments/assets/91bb3f67-c55f-4ae8-b9f4-b46934f49bde)
+To setup an account of Twilio please create an account get your account SID and Auth Token.
 If you want to send sms to any phone number, you need to uprade the account Twilio.
 # STEP 3:
 Make sure you have the key of your Firestore database of firebase. <br>
